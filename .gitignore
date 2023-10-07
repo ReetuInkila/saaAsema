@@ -1,5 +1,5 @@
 # Secret files
-secrets.h
+ruuvi/secrets.h
 
 # Prerequisites
 *.d
