@@ -55,3 +55,5 @@ Mkfile.old
 dkms.conf
 web app/dbconfig.json
 web app/secrets.py
+.vscode/arduino.json
+.vscode/c_cpp_properties.json
