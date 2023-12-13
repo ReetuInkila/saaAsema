@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import io
 from flask import Flask, request
@@ -6,6 +7,7 @@ import mysql.connector
 import mysql.connector.pooling
 import mysql.connector.errors
 from mysql.connector import errorcode
+from secrets import password_coded, password_key
 
 app = Flask(__name__)
 
@@ -29,7 +31,6 @@ except mysql.connector.Error:
 def hello_world():
     return 'Hello World'
  
-
 @app.route('/add', methods=['POST'])
 def lisaa_saa_data():
     data = request.data.decode('utf-8')
@@ -53,10 +54,36 @@ def lisaa_saa_data():
     temperature = float(temperature)
     humidity = float(humidity)
     pressure = float(pressure)
+    date = datetime.now()
 
-
+    id = lisaa(lisaa_saa_data, (date, temperature, pressure, humidity))
 
     return "Data received successfully"
+
+# Lisää tietokantaan
+def lisaa(sql, parametrit):
+    try:
+        con = pool.get_connection()
+        cur = con.cursor(buffered=True, dictionary=True)
+        cur.execute(sql, parametrit)
+
+        cur.execute("SELECT LAST_INSERT_ID()")
+        tulos = cur.fetchone()["LAST_INSERT_ID()"]
+
+        con.commit()
+        cur.close()
+    except Exception as e:
+        raise Exception("Virhe kyselyssä" + str(e) + str(parametrit))
+    finally:
+        con.close()
+    return tulos
+
+# Lisää joukkueen tietokantaan
+lisaa_saa_data = """
+INSERT INTO saaData (aika, lampo, paine, kosteus)
+VALUES (%s, %s, %s, %s)
+"""
+
 
 if __name__ == '__main__':
     app.run()
