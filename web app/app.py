@@ -28,8 +28,9 @@ except mysql.connector.Error:
     print(err)
  
 @app.route('/')
-def hello_world():
-    return 'Hello World'
+def hae_saa():
+    data = kysely(hae_saa,())
+    return data[0]
  
 @app.route('/add', methods=['POST'])
 def lisaa_saa_data():
@@ -60,6 +61,21 @@ def lisaa_saa_data():
 
     return "Data received successfully"
 
+# Tekee sql-kyselyt
+def kysely(sql, parametrit):
+    tulos = None
+    try:
+        con = pool.get_connection()
+        cur = con.cursor(buffered=True, dictionary=True)
+        cur.execute(sql, parametrit)
+        tulos = cur.fetchall()
+        cur.close()
+    except Exception as e:
+        raise Exception("Virhe kyselyssä" + str(e))
+    finally:
+        con.close()#vapautetaan tietokantayhteys takaisin pooliin
+    return tulos
+
 # Lisää tietokantaan
 def lisaa(sql, parametrit):
     try:
@@ -77,6 +93,12 @@ def lisaa(sql, parametrit):
     finally:
         con.close()
     return tulos
+
+# Hakee sää datapisteet
+hae_saa = """
+SELECT *
+FROM saaData;
+"""
 
 # Lisää joukkueen tietokantaan
 lisaa_saa_data = """
