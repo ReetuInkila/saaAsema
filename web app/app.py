@@ -1,8 +1,9 @@
 from datetime import datetime
 import hashlib
 import io
-from flask import Flask, request
+from flask import Flask, make_response, render_template, request
 import json
+from decimal import Decimal
 import mysql.connector
 import mysql.connector.pooling
 import mysql.connector.errors
@@ -28,9 +29,23 @@ except mysql.connector.Error:
     print(err)
  
 @app.route('/')
-def hae_saa():
-    data = kysely(hae_saa,())
-    return data[0]
+def index():
+    return render_template('index.xhtml')
+
+@app.route('/saa')
+def saa():
+    result = kysely(hae_saa,())[0]
+    result['aika'] =  result['aika'].strftime('%Y-%m-%d %H:%M:%S')
+    data = json.dumps(result, default=serialize_decimal)
+    response = make_response(data, 200)
+    response.headers['Content-Type'] = 'application/json'
+    return response
+
+def serialize_decimal(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError("Type not serializable")
+
  
 @app.route('/add', methods=['POST'])
 def lisaa_saa_data():
