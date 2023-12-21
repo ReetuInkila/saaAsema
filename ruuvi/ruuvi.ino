@@ -3,6 +3,7 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <time.h>
+#include <esp_sleep.h>
 
 #include "secrets.h"
 
@@ -75,11 +76,16 @@ void loop() {
     return;
   }
   int remainingMinutes = 60 - timeinfo.tm_min;
+  Serial.print("Remaining minutes until the next hour: ");
+  Serial.println(remainingMinutes);
 
   // Disconnect from Wi-Fi
   WiFi.disconnect(true);
 
-  delay(60000*remainingMinutes); // Odota tasatuntiin ennen seuraavaa skannausta
+  // Sleep mode until next hour
+  esp_sleep_enable_timer_wakeup(remainingMinutes * 60 * 1000000); // Convert minutes to microseconds
+  esp_deep_sleep_start();
+
   pBLEScan->start(5, false);
 }
 
