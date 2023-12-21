@@ -1,5 +1,6 @@
 # Secret files
 ruuvi/secrets.h
+venv/
 
 # Prerequisites
 *.d
@@ -57,3 +58,4 @@ web app/dbconfig.json
 web app/secrets.py
 .vscode/arduino.json
 .vscode/c_cpp_properties.json
+web app/__pycache__/app.cpython-311.pyc
