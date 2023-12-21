@@ -112,7 +112,9 @@ def lisaa(sql, parametrit):
 # Hakee sää datapisteet
 hae_saa = """
 SELECT *
-FROM saaData;
+FROM saaData
+ORDER BY id DESC
+LIMIT 1;
 """
 
 # Lisää joukkueen tietokantaan
