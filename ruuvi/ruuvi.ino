@@ -2,6 +2,7 @@
 #include <BLEScan.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <time.h>
 
 #include "secrets.h"
 
@@ -54,11 +55,32 @@ void setup() {
   BLEDevice::init("");
   pBLEScan = BLEDevice::getScan(); 
   pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
+
 }
 
 void loop() {
+  // Connect to Wi-Fi
+  WiFi.begin(SSID, PASS);
+    Serial.println("Connecting");
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+  }
+
+  // Haetaan jäljellä oleva aina seuraavaan tasatuntiin
+  configTime(0, 0, "pool.ntp.org");
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("Failed to obtain time");
+    return;
+  }
+  int remainingMinutes = 60 - timeinfo.tm_min;
+
+  // Disconnect from Wi-Fi
+  WiFi.disconnect(true);
+
+  delay(60000*remainingMinutes); // Odota tasatuntiin ennen seuraavaa skannausta
   pBLEScan->start(5, false);
-  delay(60000*60); // Odota 60 minuuttia ennen seuraavaa skannausta
 }
 
 void sendData(float temp, float hum, int pres){
@@ -68,7 +90,7 @@ void sendData(float temp, float hum, int pres){
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
         Serial.print(".");
-    }
+  }
 
     WiFiClient client;
     HTTPClient http;
@@ -86,4 +108,6 @@ void sendData(float temp, float hum, int pres){
     int httpResponseCode = http.POST(postData);
     Serial.println(httpResponseCode);
     http.end();
+    // Disconnect from Wi-Fi
+    WiFi.disconnect(true);
 }
