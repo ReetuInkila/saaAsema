@@ -68,7 +68,10 @@ void loop() {
         Serial.print(".");
   }
 
-  // Haetaan jäljellä oleva aina seuraavaan tasatuntiin
+  // Scan weather data
+  pBLEScan->start(5, false);
+
+  // Haetaan jäljellä oleva aika seuraavaan tasatuntiin
   configTime(0, 0, "pool.ntp.org");
   struct tm timeinfo;
   if(!getLocalTime(&timeinfo)){
@@ -83,21 +86,12 @@ void loop() {
   WiFi.disconnect(true);
 
   // Sleep mode until next hour
+  Serial.print("Sleep");
   esp_sleep_enable_timer_wakeup(remainingMinutes * 60 * 1000000); // Convert minutes to microseconds
   esp_deep_sleep_start();
-
-  pBLEScan->start(5, false);
 }
 
 void sendData(float temp, float hum, int pres){
-    // Connect to Wi-Fi
-    WiFi.begin(SSID, PASS);
-    Serial.println("Connecting");
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-  }
-
     WiFiClient client;
     HTTPClient http;
 
@@ -114,6 +108,4 @@ void sendData(float temp, float hum, int pres){
     int httpResponseCode = http.POST(postData);
     Serial.println(httpResponseCode);
     http.end();
-    // Disconnect from Wi-Fi
-    WiFi.disconnect(true);
 }
