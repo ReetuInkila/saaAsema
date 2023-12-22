@@ -13,23 +13,17 @@ BLEScan* pBLEScan;
 const char* serverUrl = "http://reetuinkila.eu.pythonanywhere.com/add";
 
 //Converts hexadecimal values to decimal values
-int hexadecimalToDecimal(String hexVal)
-{
+int hexadecimalToDecimal(String hexVal){
     int len = hexVal.length();
     int base = 1;
-
     int dec_val = 0;
 
-    for (int i = len - 1; i >= 0; i--)
-    {
-        if (hexVal[i] >= '0' && hexVal[i] <= '9')
-        {
+    for (int i = len - 1; i >= 0; i--){
+        if (hexVal[i] >= '0' && hexVal[i] <= '9'){
             dec_val += (hexVal[i] - 48) * base;
-
             base = base * 16;
         }
-        else if (hexVal[i] >= 'A' && hexVal[i] <= 'F')
-        {
+        else if (hexVal[i] >= 'A' && hexVal[i] <= 'F'){
             dec_val += (hexVal[i] - 55) * base;
 
             base = base * 16;
@@ -85,10 +79,9 @@ void loop() {
   // Disconnect from Wi-Fi
   WiFi.disconnect(true);
 
-  // Sleep mode until next hour
-  Serial.print("Sleep");
-  esp_sleep_enable_timer_wakeup(remainingMinutes * 60 * 1000000); // Convert minutes to microseconds
-  esp_deep_sleep_start();
+  // Delay until next hour
+  Serial.println("Delay");
+  delay(remainingMinutes * 60 * 1000);
 }
 
 void sendData(float temp, float hum, int pres){
