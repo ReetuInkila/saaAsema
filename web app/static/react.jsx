@@ -29,6 +29,8 @@ const App = () => {
 
 const SaaPlotter = function(props) {
     const [aika, setAika] = React.useState("");
+    const [kosteus, setKosteus] = React.useState(0);
+    const intervalRef = React.useRef();
 
     React.useEffect(() => {
         let utcDate = new Date(props.saaData.aika);
@@ -38,7 +40,19 @@ const SaaPlotter = function(props) {
     }, [props.saaData.aika]);
 
     React.useEffect(() => {
-        console.log(props.saaData.kosteus);
+        const move = () => {
+            let i = 0;
+            intervalRef.current = setInterval(() => {
+              if (i >= props.saaData.kosteus) {
+                clearInterval(intervalRef.current);
+              } else {
+                setKosteus(i);
+              }
+              i ++;
+            }, 20);
+        };
+        move();
+
     }, [props.saaData.kosteus]);
 
     return (
@@ -46,14 +60,22 @@ const SaaPlotter = function(props) {
             <h1>{aika}</h1>
             <p>{props.saaData.lampo} &deg;C</p>
             <p>{props.saaData.paine} Pa</p>  
-            <div className="background">
-                <div
-                    className="progress"
-                    style={{ width: `${props.saaData.kosteus}%` }}
-                >
-                    <img className="logo" src="static/humidity.svg"/>
-                    {props.saaData.kosteus}%
-                </div>
+            <PrecentageBar
+                precentage={kosteus}
+            />
+        </div>
+    );
+};
+
+const PrecentageBar = function(props) {
+    return (
+        <div className="background">
+            <div
+                className="progress"
+                 style={{ width: `${props.precentage}%` }}
+            >
+                <img className="logo" src="static/humidity.svg"/>
+                {props.precentage}%
             </div>
         </div>
     );
