@@ -31,21 +31,30 @@ const SaaPlotter = function(props) {
     const [aika, setAika] = React.useState("");
 
     React.useEffect(() => {
-        if(props.saaData.aika != ""){
-            let utcDate = new Date(props.saaData.aika);
-            let userTimezoneOffset = new Date().getTimezoneOffset();
-            let userDatetime = new Date(utcDate.getTime() - (userTimezoneOffset * 60000));
-            setAika(userDatetime.toLocaleString());
-        }
-    }, [props]);
+        let utcDate = new Date(props.saaData.aika);
+        let userTimezoneOffset = new Date().getTimezoneOffset();
+        let userDatetime = new Date(utcDate.getTime() - (userTimezoneOffset * 60000));
+        setAika(userDatetime.toLocaleString());
+    }, [props.saaData.aika]);
 
+    React.useEffect(() => {
+        console.log(props.saaData.kosteus);
+    }, [props.saaData.kosteus]);
 
     return (
         <div>
             <h1>{aika}</h1>
             <p>{props.saaData.lampo} &deg;C</p>
-            <p>{props.saaData.kosteus} %</p>
             <p>{props.saaData.paine} Pa</p>  
+            <div className="background">
+                <div
+                    className="progress"
+                    style={{ width: `${props.saaData.kosteus}%` }}
+                >
+                    <img className="logo" src="static/humidity.svg"/>
+                    {props.saaData.kosteus}%
+                </div>
+            </div>
         </div>
     );
 };
