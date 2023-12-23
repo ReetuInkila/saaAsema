@@ -1,0 +1,12 @@
+.background{
+    background-color:#f1f1f1;
+}
+.progress{
+    display: flex;
+    align-items: center;
+    background-color:#4c87af;
+}
+.logo{
+    height: 2em;
+    margin: 1em;
+}
