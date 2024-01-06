@@ -86,37 +86,64 @@ const PrecentageBar = function(props) {
 };
 
 const HistoryComponent = function ({ select }) {
-    const chartRef = React.useRef(null);
-    const chartInstance = React.useRef(null);
+    const [temp, setTemp] = React.useState([]);
+    const [humidity, setHumidity] = React.useState([]);
+    const [pressure, setPressure] = React.useState([]);
+    const [labels, setLabels] = React.useState([]);
 
     React.useEffect(() => {
         console.log(select);
         hae_historia(select)
         .then((data) => {
-            console.log(data);
-            const ctx = document.getElementById('historyChart').getContext('2d');
+            const temperatureValues = data.map((entry) => entry.lampo);
+            setTemp(temperatureValues);
+
+            const pressureValues =  data.map((entry) => entry.paine);
+            setPressure(pressureValues);
+
+            const humidityValues = data.map((entry) => entry.kosteus);
+            setHumidity(humidityValues);
+
+            const labels= data.map((entry) => entry.aika);
+            setLabels(labels);
+        });        
+    }, [select]);
+
+    return (
+        <div>
+            <ChartComponent data={temp} labels={labels} name={'Temperature'}/>
+            <ChartComponent data={humidity} labels={labels} name={'Humidity'}/>
+            <ChartComponent data={pressure} labels={labels} name={'Pressure'}/>
+        </div>
+            
+    );
+};
+
+const ChartComponent = function ({ data, labels, name }) {
+    const chartRef = React.useRef(null);
+    const chartInstance = React.useRef(null);
+
+    React.useEffect(() => {
+            const ctx = document.getElementById(`${name}Chart`).getContext('2d');
             if (chartInstance.current) {
                 chartInstance.current.destroy();
             }
 
-            // Extract temperature values from data
-            const temperatureValues = data.map((entry) => entry.lampo);
-
             // Find the maximum and minimum temperature values
-            const maxTemperature = Math.max(...temperatureValues)+0.1;
-            const minTemperature = Math.min(...temperatureValues)-0.1;
+            const maxValue = Math.max(...data);
+            const minValue = Math.min(...data);
 
             chartInstance.current = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: data.map((entry) => entry.aika),
+                    labels: labels,
                     datasets: [
                         {
-                          label: 'Lämpötila',
-                          data: temperatureValues,
-                          borderColor: 'rgba(255, 0, 0, 1)',
-                          borderWidth: 1,
-                          fill: false,
+                            label: name,
+                            data: data,
+                            borderColor: 'rgba(255, 0, 0, 1)',
+                            borderWidth: 1,
+                            fill: false,
                         },
                     ],
                 },
@@ -124,14 +151,6 @@ const HistoryComponent = function ({ select }) {
                     plugins: {
                         legend: {
                             display: false
-                        },
-                    },
-                    layout: {
-                        padding: {
-                            left: 0,
-                            right: 0,
-                            top: 0,
-                            bottom: 0,
                         },
                     },
                     scales: {
@@ -143,26 +162,19 @@ const HistoryComponent = function ({ select }) {
                             },
                         },
                         y: {
-                            min: minTemperature, // Set the minimum temperature value
-                            max: maxTemperature, // Set the maximum temperature value
-                            beginAtZero: false, 
+                            min: minValue, 
+                            max: maxValue,
+                            beginAtZero: false,
                         },
                     },
                 }
-            });
-
-
-
-        });            
-    }, [select]);
-
+            });            
+    }, [data]);
 
     return (
-            <canvas id="historyChart" width="100vw" height="50vw"></canvas>
+        <canvas id={`${name}Chart`} width="100vw" height="50vw"></canvas>    
     );
 };
-
-
 
 let baseUrl = window.location.href;
 
