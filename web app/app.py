@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import hashlib
 import io
 from flask import Flask, make_response, render_template, request
@@ -41,10 +41,26 @@ def saa():
     response.headers['Content-Type'] = 'application/json'
     return response
 
+@app.route('/historia/')
+def historia():
+    period = request.args.get('period')
+    if period == 'week':
+        end_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        start_date = (datetime.now() - timedelta(days=6)).strftime('%Y-%m-%d')
+        result = kysely(hae_ajalla,(start_date, end_date,))
+
+    data = json.dumps(result, default=serialize_decimal)
+    response = make_response(data, 200)
+    response.headers['Content-Type'] = 'application/json'
+    return response
+
 def serialize_decimal(obj):
     if isinstance(obj, Decimal):
         return float(obj)
-    raise TypeError("Type not serializable")
+    elif isinstance(obj, datetime):
+        return obj.strftime('%Y-%m-%d %H:%M:%S')  # Convert datetime to string
+    raise TypeError(f"Type {type(obj)} not serializable")
+
 
  
 @app.route('/add', methods=['POST'])
@@ -117,11 +133,16 @@ ORDER BY id DESC
 LIMIT 1;
 """
 
+hae_ajalla ="""
+SELECT * FROM saaData WHERE aika BETWEEN %s AND %s;
+"""
+
 # Lisää joukkueen tietokantaan
 lisaa_saa_data = """
 INSERT INTO saaData (aika, lampo, paine, kosteus)
 VALUES (%s, %s, %s, %s)
 """
+
 
 
 if __name__ == '__main__':

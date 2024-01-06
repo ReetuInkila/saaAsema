@@ -95,5 +95,15 @@ async function hae_saa(){
     return(data.json());
 }
 
+async function hae_historia(){
+    let url = new URL(baseUrl+"/historia?period=week");
+    let response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    let data = await response;
+    return(data.json());
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
