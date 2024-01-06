@@ -5,6 +5,7 @@ const App = () => {
         lampo: 0,
         paine:0
     });
+    const [select, setSelect] = React.useState("week");
 
 
     // Kun sivu avataan haetaan treenin data
@@ -21,6 +22,9 @@ const App = () => {
         <div>
             <SaaPlotter
                 saaData={last}
+            />
+            <HistoryComponent
+                select={select}
             />
         </div>
         
@@ -81,6 +85,52 @@ const PrecentageBar = function(props) {
     );
 };
 
+const HistoryComponent = function ({ select }) {
+    const chartRef = React.useRef(null);
+    const chartInstance = React.useRef(null);
+
+    React.useEffect(() => {
+        console.log(select);
+        hae_historia(select)
+        .then((data) => {
+            console.log(data);
+            const ctx = document.getElementById('historyChart').getContext('2d');
+            if (chartInstance.current) {
+                chartInstance.current.destroy();
+            }
+
+            
+
+
+            chartInstance.current = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map((entry) => entry.aika),
+                    datasets: [
+                        {
+                          label: 'Temperature',
+                          data: data.map((entry) => entry.lampo),
+                          borderColor: 'rgba(255, 99, 132, 1)',
+                          borderWidth: 1,
+                          fill: false,
+                        },
+                    ],
+                },
+                options: {
+                },
+            });
+
+
+
+        });            
+    }, [select]);
+
+
+    return (
+            <canvas id="historyChart" width="100vw" height="400px"></canvas>
+    );
+};
+
 
 
 let baseUrl = window.location.href;
@@ -95,8 +145,8 @@ async function hae_saa(){
     return(data.json());
 }
 
-async function hae_historia(){
-    let url = new URL(baseUrl+"/historia?period=week");
+async function hae_historia(duration){
+    let url = new URL(`${baseUrl}/historia?period=${duration}`);
     let response = await fetch(url);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
