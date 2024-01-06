@@ -47,7 +47,16 @@ def historia():
     if period == 'week':
         end_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         start_date = (datetime.now() - timedelta(days=6)).strftime('%Y-%m-%d')
-        result = kysely(hae_ajalla,(start_date, end_date,))
+    elif period == 'day':
+        end_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        start_date = (datetime.now() - timedelta(hours=23)).strftime('%Y-%m-%d %H:%M:%S')
+    else:
+        end_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+
+
+        
+    result = kysely(hae_ajalla,(start_date, end_date,))
 
     data = json.dumps(result, default=serialize_decimal)
     response = make_response(data, 200)
