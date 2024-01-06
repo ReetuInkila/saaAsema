@@ -99,8 +99,12 @@ const HistoryComponent = function ({ select }) {
                 chartInstance.current.destroy();
             }
 
-            
+            // Extract temperature values from data
+            const temperatureValues = data.map((entry) => entry.lampo);
 
+            // Find the maximum and minimum temperature values
+            const maxTemperature = Math.max(...temperatureValues)+0.1;
+            const minTemperature = Math.min(...temperatureValues)-0.1;
 
             chartInstance.current = new Chart(ctx, {
                 type: 'line',
@@ -108,16 +112,43 @@ const HistoryComponent = function ({ select }) {
                     labels: data.map((entry) => entry.aika),
                     datasets: [
                         {
-                          label: 'Temperature',
-                          data: data.map((entry) => entry.lampo),
-                          borderColor: 'rgba(255, 99, 132, 1)',
+                          label: 'Lämpötila',
+                          data: temperatureValues,
+                          borderColor: 'rgba(255, 0, 0, 1)',
                           borderWidth: 1,
                           fill: false,
                         },
                     ],
                 },
                 options: {
-                },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                    },
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0,
+                        },
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxTicksLimit: 7, // Set the maximum number of ticks to be displayed
+                                maxRotation: 0, // Set the maximum rotation angle
+                                minRotation: 0, // Set the minimum rotation angle
+                            },
+                        },
+                        y: {
+                            min: minTemperature, // Set the minimum temperature value
+                            max: maxTemperature, // Set the maximum temperature value
+                            beginAtZero: false, 
+                        },
+                    },
+                }
             });
 
 
@@ -127,7 +158,7 @@ const HistoryComponent = function ({ select }) {
 
 
     return (
-            <canvas id="historyChart" width="100vw" height="400px"></canvas>
+            <canvas id="historyChart" width="100vw" height="50vw"></canvas>
     );
 };
 
