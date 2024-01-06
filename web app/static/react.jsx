@@ -23,6 +23,7 @@ const App = () => {
             <SaaPlotter
                 saaData={last}
             />
+            <LengthSelector setSelect={setSelect}/>
             <HistoryComponent
                 select={select}
             />
@@ -82,6 +83,22 @@ const PrecentageBar = function(props) {
                 {props.precentage}%
             </div>
         </div>
+    );
+};
+
+const LengthSelector = function({setSelect}) {
+
+    const handleSelectChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelect(selectedValue); // Update the selected value in the parent component
+    };
+
+    return (
+        <select onChange={handleSelectChange} defaultValue="week">
+            <option value="day">Day</option>
+            <option value="week">Week</option>
+            <option value="month">Month</option>
+        </select>
     );
 };
 
