@@ -1,6 +1,10 @@
 .background{
     background-color:#f1f1f1;
 }
+.child{
+    width: 50%;
+    float: left;
+}
 .progress{
     display: flex;
     align-items: center;
@@ -10,3 +14,11 @@
     height: 2em;
     margin: 1em;
 }
+
+/* Mobile devices */
+@media only screen and (max-width: 800px) {
+    .child{
+        width: 100%;
+        float: left;
+    }
+  }
