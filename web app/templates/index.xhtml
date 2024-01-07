@@ -4,6 +4,8 @@
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" >
 		<title>Lämpötila</title>
+		<link href="{{ url_for('static', filename='favicon-light.png') }}" rel="icon" media="(prefers-color-scheme: light)">
+    	<link href="{{ url_for('static', filename='favicon-dark.png') }}" rel="icon" media="(prefers-color-scheme: dark)">
 		<link rel="StyleSheet" href="{{ url_for('static', filename='tyylit.css') }}" type="text/css" />
 		<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
 		<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
