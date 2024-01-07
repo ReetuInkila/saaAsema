@@ -9,8 +9,11 @@ import mysql.connector.pooling
 import mysql.connector.errors
 from mysql.connector import errorcode
 from secrets import password_coded, password_key
+from flask_caching import Cache
 
 app = Flask(__name__)
+# Configure Flask-Caching
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 # Tietokantayhteys
 tiedosto = io.open("/home/reetuinkila/saa/dbconfig.json", encoding="UTF-8")
@@ -33,6 +36,7 @@ def index():
     return render_template('index.xhtml')
 
 @app.route('/saa')
+@cache.cached(timeout=3600)
 def saa():
     result = kysely(hae_saa,())[0]
     result['aika'] =  result['aika'].strftime('%Y-%m-%d %H:%M:%S')
@@ -42,6 +46,7 @@ def saa():
     return response
 
 @app.route('/historia/')
+@cache.cached(timeout=3600, key_prefix=lambda: request.args.get('period'))
 def historia():
     period = request.args.get('period')
     if period == 'week':
@@ -54,8 +59,6 @@ def historia():
         end_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
 
-
-        
     result = kysely(hae_ajalla,(start_date, end_date,))
 
     data = json.dumps(result, default=serialize_decimal)
