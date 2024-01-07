@@ -20,15 +20,14 @@ const App = () => {
 
     return (
         <div>
-            <SaaPlotter
-                saaData={last}
-            />
-            <LengthSelector setSelect={setSelect}/>
+            <div className="child">
+                <SaaPlotter saaData={last} />
+                <LengthSelector setSelect={setSelect} />
+            </div>
             <HistoryComponent
                 select={select}
             />
         </div>
-        
     );
 };
 
@@ -127,10 +126,10 @@ const HistoryComponent = function ({ select }) {
     }, [select]);
 
     return (
-        <div>
+        <div className="child">
             <ChartComponent data={temp} labels={labels} name={'Temperature'}/>
-            <ChartComponent data={humidity} labels={labels} name={'Humidity'}/>
             <ChartComponent data={pressure} labels={labels} name={'Pressure'}/>
+            <ChartComponent data={humidity} labels={labels} name={'Humidity'}/>
         </div>
             
     );
@@ -189,7 +188,7 @@ const ChartComponent = function ({ data, labels, name }) {
     }, [data]);
 
     return (
-        <canvas id={`${name}Chart`} width="100vw" height="50vw"></canvas>    
+        <canvas  id={`${name}Chart`} width="100%" height="30%"></canvas>    
     );
 };
 
