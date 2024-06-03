@@ -1,13 +1,13 @@
-package com.weatherapi.weatherapi;
+package com.weatherapi.weatherstation;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WeatherApiApplication {
+public class WeatherstationApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WeatherApiApplication.class, args);
+		SpringApplication.run(WeatherstationApplication.class, args);
 	}
 
 }

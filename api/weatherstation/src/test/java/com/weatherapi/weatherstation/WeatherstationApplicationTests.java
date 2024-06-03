@@ -1,10 +1,10 @@
-package com.weatherapi.weatherapi;
+package com.weatherapi.weatherstation;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class WeatherApiApplicationTests {
+class WeatherstationApplicationTests {
 
 	@Test
 	void contextLoads() {
