@@ -79,17 +79,24 @@ void setup() {
 }
 
 void loop() {
-  printTemp(1);
   // Connect to Wi-Fi
   WiFi.begin(SSID, PASS);
-    Serial.println("Connecting");
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-        printTemp(2);
+  Serial.println("Connecting");
+
+  unsigned long startAttemptTime = millis();  // Record the time when the attempt started
+  unsigned long timeout = 10000;              // Set timeout period (in milliseconds)
+
+  while (WiFi.status() != WL_CONNECTED) {
+    if (millis() - startAttemptTime >= timeout) {
+      Serial.println("Connection failed, restarting...");
+      ESP.restart();  // Restart the ESP32
     }
-    Serial.println();
-  printTemp(3);
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println();
+  Serial.println("Connected!");
   // Scan weather data
   pBLEScan->start(5, false);
 
@@ -98,10 +105,8 @@ void loop() {
   struct tm timeinfo;
   if(!getLocalTime(&timeinfo)){
     Serial.println("Failed to obtain time");
-    printTemp(4);
     return;
   }
-  printTemp(5);
   // Calculate the remaining minutes until the next quarter-hour
   int remainingMinutes = 15 - (timeinfo.tm_min % 15);
 
@@ -117,14 +122,12 @@ void loop() {
     print = false;
     display.ssd1306_command(SSD1306_DISPLAYOFF);
   }
-  printTemp(6);
   // Disconnect from Wi-Fi
   WiFi.disconnect(true);
 
   // Delay until next quarter-hour
   Serial.println(remainingMinutes);
   delay(remainingMinutes * 60 * 1000);
-  printTemp(7);
 }
 
 void useData(float temp, float hum, int pres){
@@ -138,13 +141,11 @@ void useData(float temp, float hum, int pres){
 }
 
 void sendData(float temp, float hum, int pres){
-    printTemp(88);
     WiFiClient client; 
     HTTPClient http;
 
     http.begin(client, serverUrl);
     http.addHeader("Content-Type", "text/plain");
-    printTemp(9);
     String postData = String(temp) + "," +
                       String(hum) + "," +
                       String(pres) + "," +
@@ -153,7 +154,6 @@ void sendData(float temp, float hum, int pres){
     Serial.println(postData);
     
     int httpResponseCode = http.POST(postData);
-    printTemp(10);
     Serial.println(httpResponseCode);
     http.end();
 }
