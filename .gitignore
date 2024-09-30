@@ -1,5 +1,5 @@
 # Secret files
-ruuvi/secrets.h
+secrets.h
 venv/
 
 # Prerequisites
