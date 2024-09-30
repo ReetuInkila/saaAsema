@@ -1,6 +1,7 @@
 # Secret files
 secrets.h
 venv/
+secrets.py
 
 # Prerequisites
 *.d

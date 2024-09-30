@@ -10,8 +10,11 @@ import mysql.connector.errors
 from mysql.connector import errorcode
 from secrets import password_coded, password_key
 from flask_caching import Cache
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 # Configure Flask-Caching
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
