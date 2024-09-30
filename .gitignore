@@ -61,3 +61,4 @@ web app/secrets.py
 .vscode/c_cpp_properties.json
 web app/__pycache__/app.cpython-311.pyc
 ruuviStation/src/secrets.h
+web\ app/backend/secrets.py
