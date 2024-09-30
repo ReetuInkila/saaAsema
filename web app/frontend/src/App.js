@@ -188,7 +188,6 @@ const HistoryComponent = function ({ select }) {
 */
 const ChartComponent = function ({ data, labels, name }) {
   // Ref for the chart canvas and chart instance
-  const chartRef = React.useRef(null);
   const chartInstance = React.useRef(null);
 
   /**
@@ -240,15 +239,12 @@ const ChartComponent = function ({ data, labels, name }) {
               },
           }
       });
-  }, [data, labels]);
+  }, [data, labels, name]);
 
   return (
       <canvas id={`${name}Chart`} width="100%" height="30%"></canvas>
   );
 };
-
-// Base URL for API requests
-let baseUrl = "https://reetuinkila.eu.pythonanywhere.com/";
 
 /**
 * Async function to fetch current weather data.
