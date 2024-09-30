@@ -245,7 +245,7 @@ const ChartComponent = function ({ data, labels, name }) {
 };
 
 // Base URL for API requests
-let baseUrl = window.location.href;
+let baseUrl = "https://reetuinkila.eu.pythonanywhere.com";
 
 /**
  * Async function to fetch current weather data.
@@ -267,7 +267,7 @@ async function hae_saa() {
  * @returns {Promise<Object[]>} Promise that resolves to an array of historical weather data.
  */
 async function hae_historia(duration) {
-    let url = new URL(`${baseUrl}/historia?period=${duration}`);
+    let url = new URL(`https://reetuinkila.eu.pythonanywhere.com/historia?period=${duration}`);
     let response = await fetch(url);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
