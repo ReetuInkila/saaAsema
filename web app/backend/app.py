@@ -35,13 +35,6 @@ except mysql.connector.Error as err:
     else:
         print(err)
 
-
-@app.route('/')
-def index():
-    """Render the index page."""
-    return render_template('index.xhtml')
-
-
 @app.route('/saa')
 @cache.cached(timeout=3600)
 def saa():
@@ -52,7 +45,6 @@ def saa():
     response = make_response(data, 200)
     response.headers['Content-Type'] = 'application/json'
     return response
-
 
 @app.route('/historia/')
 @cache.cached(timeout=3600, key_prefix=lambda: request.args.get('period'))
@@ -76,7 +68,6 @@ def historia():
     response.headers['Content-Type'] = 'application/json'
     return response
 
-
 def serialize_decimal(obj):
     """Serialize Decimal and datetime objects to a format suitable for JSON serialization."""
     if isinstance(obj, Decimal):
@@ -84,7 +75,6 @@ def serialize_decimal(obj):
     elif isinstance(obj, datetime):
         return obj.strftime('%Y-%m-%d %H:%M:%S')  # Convert datetime to string
     raise TypeError(f"Type {type(obj)} not serializable")
-
 
 @app.route('/add', methods=['POST'])
 def lisaa_saa_data():
@@ -116,7 +106,6 @@ def lisaa_saa_data():
 
     return "Data received successfully"
 
-
 # Execute SQL queries
 def kysely(sql, parametrit):
     """Execute a SQL query and return the result."""
@@ -132,7 +121,6 @@ def kysely(sql, parametrit):
     finally:
         con.close()  # Release the database connection back to the pool
     return tulos
-
 
 # Add data to the database
 def lisaa(sql, parametrit):
@@ -152,7 +140,6 @@ def lisaa(sql, parametrit):
     finally:
         con.close()
     return tulos
-
 
 # Retrieve weather data
 hae_saa = """
