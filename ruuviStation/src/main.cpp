@@ -76,6 +76,29 @@ void setup() {
   display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);
   display.clearDisplay(); // Clear the display buffer
 
+   // Connect to Wi-Fi
+  WiFi.begin(SSID, PASS);
+  Serial.println("Connecting");
+
+  unsigned long startAttemptTime = millis();  // Record the time when the attempt started
+  unsigned long timeout = 10000;              // Set timeout period (in milliseconds)
+
+  while (WiFi.status() != WL_CONNECTED) {
+    if (millis() - startAttemptTime >= timeout) {
+      Serial.println("Connection failed, restarting...");
+      ESP.restart();  // Restart the ESP32
+    }
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println();
+
+  // Configure time for Finland (EET/EEST) using timezone rules
+  // The string "EET-2EEST,M3.5.0/3,M10.5.0/4" accounts for DST changes
+  configTzTime("EET-2EEST,M3.5.0/3,M10.5.0/4", "pool.ntp.org");
+  // Disconnect from Wi-Fi
+  WiFi.disconnect(true);
 }
 
 void loop() {
@@ -101,7 +124,6 @@ void loop() {
   pBLEScan->start(5, false);
 
   // Get current time
-  configTime(0, 0, "pool.ntp.org");
   struct tm timeinfo;
   if(!getLocalTime(&timeinfo)){
     Serial.println("Failed to obtain time");
@@ -115,7 +137,7 @@ void loop() {
     send = true;
   }
 
-  if(timeinfo.tm_hour <= 22 && timeinfo.tm_hour >= 7){
+  if(timeinfo.tm_hour <= 21 && timeinfo.tm_hour >= 6){
     print = true;
     display.ssd1306_command(SSD1306_DISPLAYON);
   }else{
