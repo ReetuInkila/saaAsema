@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import hashlib
 import io
-from flask import Flask, make_response, render_template, request
+from flask import Flask, make_response, redirect, request
 import json
 from decimal import Decimal
 import mysql.connector
@@ -11,6 +11,7 @@ from mysql.connector import errorcode
 from secrets import password_coded, password_key
 from flask_caching import Cache
 from flask_cors import CORS
+import pytz
 
 app = Flask(__name__)
 CORS(app)
@@ -34,6 +35,13 @@ except mysql.connector.Error as err:
         print("Tietokantaa ei löydy")
     else:
         print(err)
+
+
+# home route that redirects to new frontend app
+@app.route("/")
+def home():
+    return redirect("https://lampotila.inkilareetu.fi/", code=302)
+
 
 @app.route('/saa')
 @cache.cached(timeout=3600)
@@ -96,11 +104,13 @@ def lisaa_saa_data():
     # Check if all required parameters are present
     if temperature is None or humidity is None or pressure is None:
         return "Missing parameters", 400
+    
+    finnish_timezone = pytz.timezone('Europe/Helsinki')
 
     temperature = float(temperature)
     humidity = float(humidity)
     pressure = float(pressure)
-    date = datetime.now()
+    date = datetime.now(finnish_timezone)
 
     id = lisaa(lisaa_saa_data, (date, temperature, pressure, humidity))
 
