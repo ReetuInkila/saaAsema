@@ -18,9 +18,7 @@ const SaaPlotter = function (props) {
     React.useEffect(() => {
         if (props.saaData.aika) {
             let utcDate = new Date(props.saaData.aika);
-            let userTimezoneOffset = new Date().getTimezoneOffset();
-            let userDatetime = new Date(utcDate.getTime() - (userTimezoneOffset * 60000));
-            setAika(userDatetime.toLocaleString());
+            setAika(utcDate.toLocaleString());
         }
     }, [props.saaData.aika]);
 
