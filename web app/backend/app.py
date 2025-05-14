@@ -40,7 +40,7 @@ except mysql.connector.Error as err:
 # home route that redirects to new frontend app
 @app.route("/")
 def home():
-    return redirect("https://lampotila.inkilareetu.fi/", code=302)
+    return redirect("https://lampotila.rinkila.fi/", code=302)
 
 
 @app.route('/saa')
